@@ -5,6 +5,9 @@ use Getopt::Long;
 use Filesys::Notify::Simple;
 use Pod::Usage;
 
+# process does not die when received SIGTERM, on win32.
+my $TERMSIG = $^O eq 'MSWin32' ? 'KILL' : 'TERM';
+
 my @dir;
 GetOptions(
     'dir=s@' => \@dir,
@@ -45,7 +48,7 @@ sub kill_pid {
 
     info("Killing the existing server (pid:$pid)");
 
-    kill 'TERM' => $pid;
+    kill $TERMSIG => $pid;
     waitpid( $pid, 0 );
 }
 
